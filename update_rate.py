@@ -2,18 +2,20 @@ import settings
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.by import By
+from selenium.webdriver.chrome import service as fs
 import time
 import streamlit as st
-
+import os
 
 def main():
     # 自分のスマメイトのurl
     my_url = f"https://smashmate.net/user/{settings.MY_ID}/"
     
     # Chromeのドライバーの設定
+    chrome_service = fs.Service(executable_path=os.path.abspath("./chromedriver")) 
     options = Options()
     options.add_argument('--headless')
-    driver = webdriver.Chrome(options=options)
+    driver = webdriver.Chrome(service=chrome_service, options=options)
     
     # レート表示用のプレースホルダー
     rate_holder = st.empty()
@@ -24,6 +26,7 @@ def main():
             driver.get(my_url)
             rate = driver.find_elements(By.CLASS_NAME, "rate_text")[0].text.split()[0]
             rate_holder.markdown(f"# {rate}")
+            print(rate)
             time.sleep(5)
         except KeyboardInterrupt:
             break
